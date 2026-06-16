@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppTaskPlannerRouteImport } from './routes/_app.task-planner'
+import { Route as AppSavedProjectsRouteImport } from './routes/_app.saved-projects'
 import { Route as AppResearchAssistantRouteImport } from './routes/_app.research-assistant'
 import { Route as AppMeetingSummarizerRouteImport } from './routes/_app.meeting-summarizer'
 import { Route as AppEmailGeneratorRouteImport } from './routes/_app.email-generator'
@@ -30,6 +31,11 @@ const IndexRoute = IndexRouteImport.update({
 const AppTaskPlannerRoute = AppTaskPlannerRouteImport.update({
   id: '/task-planner',
   path: '/task-planner',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSavedProjectsRoute = AppSavedProjectsRouteImport.update({
+  id: '/saved-projects',
+  path: '/saved-projects',
   getParentRoute: () => AppRoute,
 } as any)
 const AppResearchAssistantRoute = AppResearchAssistantRouteImport.update({
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/email-generator': typeof AppEmailGeneratorRoute
   '/meeting-summarizer': typeof AppMeetingSummarizerRoute
   '/research-assistant': typeof AppResearchAssistantRoute
+  '/saved-projects': typeof AppSavedProjectsRoute
   '/task-planner': typeof AppTaskPlannerRoute
 }
 export interface FileRoutesByTo {
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/email-generator': typeof AppEmailGeneratorRoute
   '/meeting-summarizer': typeof AppMeetingSummarizerRoute
   '/research-assistant': typeof AppResearchAssistantRoute
+  '/saved-projects': typeof AppSavedProjectsRoute
   '/task-planner': typeof AppTaskPlannerRoute
 }
 export interface FileRoutesById {
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/_app/email-generator': typeof AppEmailGeneratorRoute
   '/_app/meeting-summarizer': typeof AppMeetingSummarizerRoute
   '/_app/research-assistant': typeof AppResearchAssistantRoute
+  '/_app/saved-projects': typeof AppSavedProjectsRoute
   '/_app/task-planner': typeof AppTaskPlannerRoute
 }
 export interface FileRouteTypes {
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/email-generator'
     | '/meeting-summarizer'
     | '/research-assistant'
+    | '/saved-projects'
     | '/task-planner'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
     | '/email-generator'
     | '/meeting-summarizer'
     | '/research-assistant'
+    | '/saved-projects'
     | '/task-planner'
   id:
     | '__root__'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '/_app/email-generator'
     | '/_app/meeting-summarizer'
     | '/_app/research-assistant'
+    | '/_app/saved-projects'
     | '/_app/task-planner'
   fileRoutesById: FileRoutesById
 }
@@ -144,6 +156,13 @@ declare module '@tanstack/react-router' {
       path: '/task-planner'
       fullPath: '/task-planner'
       preLoaderRoute: typeof AppTaskPlannerRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/saved-projects': {
+      id: '/_app/saved-projects'
+      path: '/saved-projects'
+      fullPath: '/saved-projects'
+      preLoaderRoute: typeof AppSavedProjectsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/research-assistant': {
@@ -190,6 +209,7 @@ interface AppRouteChildren {
   AppEmailGeneratorRoute: typeof AppEmailGeneratorRoute
   AppMeetingSummarizerRoute: typeof AppMeetingSummarizerRoute
   AppResearchAssistantRoute: typeof AppResearchAssistantRoute
+  AppSavedProjectsRoute: typeof AppSavedProjectsRoute
   AppTaskPlannerRoute: typeof AppTaskPlannerRoute
 }
 
@@ -199,6 +219,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppEmailGeneratorRoute: AppEmailGeneratorRoute,
   AppMeetingSummarizerRoute: AppMeetingSummarizerRoute,
   AppResearchAssistantRoute: AppResearchAssistantRoute,
+  AppSavedProjectsRoute: AppSavedProjectsRoute,
   AppTaskPlannerRoute: AppTaskPlannerRoute,
 }
 
