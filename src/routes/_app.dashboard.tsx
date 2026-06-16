@@ -7,8 +7,8 @@ import {
   Mail,
   NotebookText,
   Search,
-  TrendingUp,
 } from "lucide-react";
+
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -38,7 +38,7 @@ function Dashboard() {
   const completed = tasks.filter((t) => t.status === "done").length;
   const totalTasks = tasks.length;
   const completion = totalTasks ? Math.round((completed / totalTasks) * 100) : 0;
-  const productivity = Math.min(100, 55 + projects.length * 4 + completed * 3);
+
 
   const recent = [
     ...projects.slice(0, 4).map((p) => ({
@@ -65,22 +65,8 @@ function Dashboard() {
         </p>
       </header>
 
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Productivity Score
-            </CardTitle>
-            <TrendingUp className="h-4 w-4 text-primary" />
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="text-3xl font-bold">{productivity}</div>
-            <Progress value={productivity} />
-            <p className="text-xs text-muted-foreground">
-              Based on saved work and completed tasks this week.
-            </p>
-          </CardContent>
-        </Card>
+      <section className="grid gap-4 sm:grid-cols-2">
+
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">

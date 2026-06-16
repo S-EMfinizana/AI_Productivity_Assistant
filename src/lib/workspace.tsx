@@ -43,7 +43,7 @@ export interface TTSSettings {
   autoRead: boolean;
 }
 
-type Theme = "light" | "dark";
+type Theme = "light" | "dark" | "system";
 
 interface WorkspaceCtx {
   theme: Theme;
@@ -89,7 +89,7 @@ function save<T>(key: string, value: T) {
 }
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
+  const [theme, setThemeState] = useState<Theme>("system");
   const [tts, setTTSState] = useState<TTSSettings>({
     rate: 1,
     pitch: 1,
@@ -101,7 +101,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setThemeState(load<Theme>(LS.theme, "light"));
+    setThemeState(load<Theme>(LS.theme, "system"));
     setTTSState(load<TTSSettings>(LS.tts, { rate: 1, pitch: 1, voiceURI: null, autoRead: false }));
     setProjects(load<SavedProject[]>(LS.projects, []));
     setTasks(load<PlannerTask[]>(LS.tasks, []));
@@ -110,8 +110,17 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (typeof document === "undefined") return;
-    document.documentElement.classList.toggle("dark", theme === "dark");
+    const mql = window.matchMedia("(prefers-color-scheme: dark)");
+    const apply = () => {
+      const isDark = theme === "dark" || (theme === "system" && mql.matches);
+      document.documentElement.classList.toggle("dark", isDark);
+    };
+    apply();
     if (hydrated) save(LS.theme, theme);
+    if (theme === "system") {
+      mql.addEventListener("change", apply);
+      return () => mql.removeEventListener("change", apply);
+    }
   }, [theme, hydrated]);
 
   useEffect(() => { if (hydrated) save(LS.tts, tts); }, [tts, hydrated]);
@@ -120,9 +129,18 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   const setTheme = useCallback((t: Theme) => setThemeState(t), []);
   const toggleTheme = useCallback(
-    () => setThemeState((t) => (t === "dark" ? "light" : "dark")),
+    () =>
+      setThemeState((t) => {
+        const isDark =
+          t === "dark" ||
+          (t === "system" &&
+            typeof window !== "undefined" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        return isDark ? "light" : "dark";
+      }),
     [],
   );
+
   const setTTS = useCallback(
     (s: Partial<TTSSettings>) => setTTSState((prev) => ({ ...prev, ...s })),
     [],
