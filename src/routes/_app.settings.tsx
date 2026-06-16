@@ -107,7 +107,8 @@ function SettingsPage() {
 
       <Card className="border-destructive/40">
         <CardHeader>
-          <CardTitle className="text-base text-destructive">Danger zone</CardTitle>
+          <CardTitle className="text-base text-destructive">Chat history</CardTitle>
+
           <CardDescription>
             Permanently delete your workplace chat history from this browser. This cannot be undone.
           </CardDescription>
