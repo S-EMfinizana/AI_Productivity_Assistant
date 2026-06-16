@@ -146,6 +146,14 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   useEffect(() => { if (hydrated) save(LS.projects, projects); }, [projects, hydrated]);
   useEffect(() => { if (hydrated) save(LS.tasks, tasks); }, [tasks, hydrated]);
 
+  useEffect(() => { if (hydrated) save(LS.chats, chats); }, [chats, hydrated]);
+
+  const setChats = useCallback(
+    (updater: (prev: ChatConversation[]) => ChatConversation[]) => setChatsState(updater),
+    [],
+  );
+  const clearChats = useCallback(() => setChatsState([]), []);
+
   const setTheme = useCallback((t: Theme) => setThemeState(t), []);
   const toggleTheme = useCallback(
     () =>
