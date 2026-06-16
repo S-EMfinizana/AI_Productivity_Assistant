@@ -115,6 +115,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   });
   const [projects, setProjects] = useState<SavedProject[]>([]);
   const [tasks, setTasks] = useState<PlannerTask[]>([]);
+  const [chats, setChatsState] = useState<ChatConversation[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
@@ -122,6 +123,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     setTTSState(load<TTSSettings>(LS.tts, { rate: 1, pitch: 1, voiceURI: null, autoRead: false }));
     setProjects(load<SavedProject[]>(LS.projects, []));
     setTasks(load<PlannerTask[]>(LS.tasks, []));
+    setChatsState(load<ChatConversation[]>(LS.chats, []));
     setHydrated(true);
   }, []);
 
