@@ -1,5 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -14,8 +28,9 @@ export const Route = createFileRoute("/_app/settings")({
 });
 
 function SettingsPage() {
-  const { theme, setTheme, tts, setTTS } = useWorkspace();
+  const { theme, setTheme, tts, setTTS, chats, clearChats } = useWorkspace();
   const voices = useVoices();
+  const totalMessages = chats.reduce((sum, c) => sum + c.messages.length, 0);
 
   return (
     <div className="space-y-6">
@@ -87,6 +102,47 @@ function SettingsPage() {
               <Slider min={0} max={2} step={0.1} value={[tts.pitch]} onValueChange={(v) => setTTS({ pitch: v[0] })} />
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-destructive/40">
+        <CardHeader>
+          <CardTitle className="text-base text-destructive">Danger zone</CardTitle>
+          <CardDescription>
+            Permanently delete your workplace chat history from this browser. This cannot be undone.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-muted-foreground">
+            {chats.length} conversation{chats.length === 1 ? "" : "s"} · {totalMessages} message{totalMessages === 1 ? "" : "s"}
+          </p>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" disabled={chats.length === 0}>
+                <Trash2 className="mr-2 h-4 w-4" /> Delete chat history
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  User data will be irrecoverable. All workplace chatbot conversations and messages stored in this browser will be permanently deleted.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    clearChats();
+                    toast.success("Chat history deleted.");
+                  }}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Yes, delete everything
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardContent>
       </Card>
 

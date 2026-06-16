@@ -36,6 +36,19 @@ export interface PlannerTask {
   urgency?: "urgent" | "not_urgent";
 }
 
+export interface ChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  at: string;
+}
+
+export interface ChatConversation {
+  id: string;
+  title: string;
+  messages: ChatMessage[];
+}
+
 export interface TTSSettings {
   rate: number;
   pitch: number;
@@ -58,6 +71,9 @@ interface WorkspaceCtx {
   addTasks: (t: Omit<PlannerTask, "id">[]) => void;
   updateTask: (id: string, patch: Partial<PlannerTask>) => void;
   deleteTask: (id: string) => void;
+  chats: ChatConversation[];
+  setChats: (updater: (prev: ChatConversation[]) => ChatConversation[]) => void;
+  clearChats: () => void;
 }
 
 const Ctx = createContext<WorkspaceCtx | null>(null);
@@ -67,6 +83,7 @@ const LS = {
   tts: "ow_tts",
   projects: "ow_projects",
   tasks: "ow_tasks",
+  chats: "ow_chats",
 };
 
 function load<T>(key: string, fallback: T): T {
@@ -98,6 +115,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   });
   const [projects, setProjects] = useState<SavedProject[]>([]);
   const [tasks, setTasks] = useState<PlannerTask[]>([]);
+  const [chats, setChatsState] = useState<ChatConversation[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
@@ -105,6 +123,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     setTTSState(load<TTSSettings>(LS.tts, { rate: 1, pitch: 1, voiceURI: null, autoRead: false }));
     setProjects(load<SavedProject[]>(LS.projects, []));
     setTasks(load<PlannerTask[]>(LS.tasks, []));
+    setChatsState(load<ChatConversation[]>(LS.chats, []));
     setHydrated(true);
   }, []);
 
@@ -126,6 +145,14 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   useEffect(() => { if (hydrated) save(LS.tts, tts); }, [tts, hydrated]);
   useEffect(() => { if (hydrated) save(LS.projects, projects); }, [projects, hydrated]);
   useEffect(() => { if (hydrated) save(LS.tasks, tasks); }, [tasks, hydrated]);
+
+  useEffect(() => { if (hydrated) save(LS.chats, chats); }, [chats, hydrated]);
+
+  const setChats = useCallback(
+    (updater: (prev: ChatConversation[]) => ChatConversation[]) => setChatsState(updater),
+    [],
+  );
+  const clearChats = useCallback(() => setChatsState([]), []);
 
   const setTheme = useCallback((t: Theme) => setThemeState(t), []);
   const toggleTheme = useCallback(
@@ -196,8 +223,11 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       addTasks,
       updateTask,
       deleteTask,
+      chats,
+      setChats,
+      clearChats,
     }),
-    [theme, setTheme, toggleTheme, tts, setTTS, projects, saveProject, deleteProject, tasks, addTasks, updateTask, deleteTask],
+    [theme, setTheme, toggleTheme, tts, setTTS, projects, saveProject, deleteProject, tasks, addTasks, updateTask, deleteTask, chats, setChats, clearChats],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
