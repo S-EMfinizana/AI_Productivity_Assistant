@@ -9,25 +9,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { chatReply, delay } from "@/lib/mock-ai";
 import { speak } from "@/lib/tts";
-import { useWorkspace } from "@/lib/workspace";
+import { useWorkspace, type ChatConversation as Conversation, type ChatMessage as Message } from "@/lib/workspace";
 
 export const Route = createFileRoute("/_app/chatbot")({
   head: () => ({ meta: [{ title: "Workplace Chatbot · OmniWork AI" }] }),
   component: Chatbot,
 });
-
-interface Message {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  at: string;
-}
-
-interface Conversation {
-  id: string;
-  title: string;
-  messages: Message[];
-}
 
 const quickPrompts = [
   "Draft client follow-up",
@@ -37,18 +24,21 @@ const quickPrompts = [
 ];
 
 function Chatbot() {
-  const { tts } = useWorkspace();
-  const [convos, setConvos] = useState<Conversation[]>([
-    { id: crypto.randomUUID(), title: "New chat", messages: [] },
-  ]);
-  const [activeId, setActiveId] = useState<string>(() => "");
+  const { tts, chats: convos, setChats: setConvos } = useWorkspace();
+  const [activeId, setActiveId] = useState<string>("");
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!activeId && convos[0]) setActiveId(convos[0].id);
-  }, [activeId, convos]);
+    if (convos.length === 0) {
+      const c: Conversation = { id: crypto.randomUUID(), title: "New chat", messages: [] };
+      setConvos(() => [c]);
+      setActiveId(c.id);
+    } else if (!convos.find((c) => c.id === activeId)) {
+      setActiveId(convos[0].id);
+    }
+  }, [convos, activeId, setConvos]);
 
   const active = convos.find((c) => c.id === activeId) ?? convos[0];
 
