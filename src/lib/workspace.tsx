@@ -43,7 +43,7 @@ export interface TTSSettings {
   autoRead: boolean;
 }
 
-type Theme = "light" | "dark";
+type Theme = "light" | "dark" | "system";
 
 interface WorkspaceCtx {
   theme: Theme;
