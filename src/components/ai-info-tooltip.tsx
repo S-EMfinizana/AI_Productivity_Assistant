@@ -17,6 +17,9 @@ export function AIInfoTooltip() {
         </TooltipTrigger>
         <TooltipContent side="left" className="max-w-xs text-xs leading-relaxed">
           <p className="font-semibold mb-1">Responsible AI use</p>
+          <p className="mb-2 font-medium text-amber-500">
+            Disclaimer: AI-generated output may be inaccurate or incomplete. Use at your own discretion.
+          </p>
           <ul className="list-disc pl-4 space-y-1">
             <li>Review every generation for accuracy before sharing externally.</li>
             <li>Do not paste confidential or personal data into prompts.</li>
