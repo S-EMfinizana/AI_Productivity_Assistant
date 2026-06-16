@@ -65,22 +65,8 @@ function Dashboard() {
         </p>
       </header>
 
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Productivity Score
-            </CardTitle>
-            <TrendingUp className="h-4 w-4 text-primary" />
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="text-3xl font-bold">{productivity}</div>
-            <Progress value={productivity} />
-            <p className="text-xs text-muted-foreground">
-              Based on saved work and completed tasks this week.
-            </p>
-          </CardContent>
-        </Card>
+      <section className="grid gap-4 sm:grid-cols-2">
+
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
