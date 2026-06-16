@@ -223,8 +223,11 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       addTasks,
       updateTask,
       deleteTask,
+      chats,
+      setChats,
+      clearChats,
     }),
-    [theme, setTheme, toggleTheme, tts, setTTS, projects, saveProject, deleteProject, tasks, addTasks, updateTask, deleteTask],
+    [theme, setTheme, toggleTheme, tts, setTTS, projects, saveProject, deleteProject, tasks, addTasks, updateTask, deleteTask, chats, setChats, clearChats],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
