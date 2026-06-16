@@ -32,13 +32,15 @@ function SettingsPage() {
         <CardContent className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label>Theme</Label>
-            <Select value={theme} onValueChange={(v) => setTheme(v as "light" | "dark")}>
+            <Select value={theme} onValueChange={(v) => setTheme(v as "light" | "dark" | "system")}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="light">☀️ Light</SelectItem>
                 <SelectItem value="dark">🌙 Dark</SelectItem>
+                <SelectItem value="system">🖥️ System default</SelectItem>
               </SelectContent>
             </Select>
+
           </div>
         </CardContent>
       </Card>
