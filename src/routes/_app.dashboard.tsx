@@ -38,7 +38,7 @@ function Dashboard() {
   const completed = tasks.filter((t) => t.status === "done").length;
   const totalTasks = tasks.length;
   const completion = totalTasks ? Math.round((completed / totalTasks) * 100) : 0;
-  const productivity = Math.min(100, 55 + projects.length * 4 + completed * 3);
+
 
   const recent = [
     ...projects.slice(0, 4).map((p) => ({
