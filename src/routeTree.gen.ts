@@ -9,38 +9,153 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppTaskPlannerRouteImport } from './routes/_app.task-planner'
+import { Route as AppSettingsRouteImport } from './routes/_app.settings'
+import { Route as AppSavedProjectsRouteImport } from './routes/_app.saved-projects'
+import { Route as AppResearchAssistantRouteImport } from './routes/_app.research-assistant'
+import { Route as AppMeetingSummarizerRouteImport } from './routes/_app.meeting-summarizer'
+import { Route as AppEmailGeneratorRouteImport } from './routes/_app.email-generator'
+import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
+import { Route as AppChatbotRouteImport } from './routes/_app.chatbot'
 
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppTaskPlannerRoute = AppTaskPlannerRouteImport.update({
+  id: '/task-planner',
+  path: '/task-planner',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSavedProjectsRoute = AppSavedProjectsRouteImport.update({
+  id: '/saved-projects',
+  path: '/saved-projects',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResearchAssistantRoute = AppResearchAssistantRouteImport.update({
+  id: '/research-assistant',
+  path: '/research-assistant',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMeetingSummarizerRoute = AppMeetingSummarizerRouteImport.update({
+  id: '/meeting-summarizer',
+  path: '/meeting-summarizer',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEmailGeneratorRoute = AppEmailGeneratorRouteImport.update({
+  id: '/email-generator',
+  path: '/email-generator',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDashboardRoute = AppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppChatbotRoute = AppChatbotRouteImport.update({
+  id: '/chatbot',
+  path: '/chatbot',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/chatbot': typeof AppChatbotRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/email-generator': typeof AppEmailGeneratorRoute
+  '/meeting-summarizer': typeof AppMeetingSummarizerRoute
+  '/research-assistant': typeof AppResearchAssistantRoute
+  '/saved-projects': typeof AppSavedProjectsRoute
+  '/settings': typeof AppSettingsRoute
+  '/task-planner': typeof AppTaskPlannerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/chatbot': typeof AppChatbotRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/email-generator': typeof AppEmailGeneratorRoute
+  '/meeting-summarizer': typeof AppMeetingSummarizerRoute
+  '/research-assistant': typeof AppResearchAssistantRoute
+  '/saved-projects': typeof AppSavedProjectsRoute
+  '/settings': typeof AppSettingsRoute
+  '/task-planner': typeof AppTaskPlannerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_app/chatbot': typeof AppChatbotRoute
+  '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/email-generator': typeof AppEmailGeneratorRoute
+  '/_app/meeting-summarizer': typeof AppMeetingSummarizerRoute
+  '/_app/research-assistant': typeof AppResearchAssistantRoute
+  '/_app/saved-projects': typeof AppSavedProjectsRoute
+  '/_app/settings': typeof AppSettingsRoute
+  '/_app/task-planner': typeof AppTaskPlannerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/chatbot'
+    | '/dashboard'
+    | '/email-generator'
+    | '/meeting-summarizer'
+    | '/research-assistant'
+    | '/saved-projects'
+    | '/settings'
+    | '/task-planner'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/chatbot'
+    | '/dashboard'
+    | '/email-generator'
+    | '/meeting-summarizer'
+    | '/research-assistant'
+    | '/saved-projects'
+    | '/settings'
+    | '/task-planner'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/_app/chatbot'
+    | '/_app/dashboard'
+    | '/_app/email-generator'
+    | '/_app/meeting-summarizer'
+    | '/_app/research-assistant'
+    | '/_app/saved-projects'
+    | '/_app/settings'
+    | '/_app/task-planner'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +163,93 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/task-planner': {
+      id: '/_app/task-planner'
+      path: '/task-planner'
+      fullPath: '/task-planner'
+      preLoaderRoute: typeof AppTaskPlannerRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/saved-projects': {
+      id: '/_app/saved-projects'
+      path: '/saved-projects'
+      fullPath: '/saved-projects'
+      preLoaderRoute: typeof AppSavedProjectsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/research-assistant': {
+      id: '/_app/research-assistant'
+      path: '/research-assistant'
+      fullPath: '/research-assistant'
+      preLoaderRoute: typeof AppResearchAssistantRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/meeting-summarizer': {
+      id: '/_app/meeting-summarizer'
+      path: '/meeting-summarizer'
+      fullPath: '/meeting-summarizer'
+      preLoaderRoute: typeof AppMeetingSummarizerRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/email-generator': {
+      id: '/_app/email-generator'
+      path: '/email-generator'
+      fullPath: '/email-generator'
+      preLoaderRoute: typeof AppEmailGeneratorRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/dashboard': {
+      id: '/_app/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/chatbot': {
+      id: '/_app/chatbot'
+      path: '/chatbot'
+      fullPath: '/chatbot'
+      preLoaderRoute: typeof AppChatbotRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppChatbotRoute: typeof AppChatbotRoute
+  AppDashboardRoute: typeof AppDashboardRoute
+  AppEmailGeneratorRoute: typeof AppEmailGeneratorRoute
+  AppMeetingSummarizerRoute: typeof AppMeetingSummarizerRoute
+  AppResearchAssistantRoute: typeof AppResearchAssistantRoute
+  AppSavedProjectsRoute: typeof AppSavedProjectsRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppTaskPlannerRoute: typeof AppTaskPlannerRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppChatbotRoute: AppChatbotRoute,
+  AppDashboardRoute: AppDashboardRoute,
+  AppEmailGeneratorRoute: AppEmailGeneratorRoute,
+  AppMeetingSummarizerRoute: AppMeetingSummarizerRoute,
+  AppResearchAssistantRoute: AppResearchAssistantRoute,
+  AppSavedProjectsRoute: AppSavedProjectsRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppTaskPlannerRoute: AppTaskPlannerRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
