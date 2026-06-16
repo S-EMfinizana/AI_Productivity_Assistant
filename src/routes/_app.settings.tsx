@@ -1,5 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -14,8 +28,9 @@ export const Route = createFileRoute("/_app/settings")({
 });
 
 function SettingsPage() {
-  const { theme, setTheme, tts, setTTS } = useWorkspace();
+  const { theme, setTheme, tts, setTTS, chats, clearChats } = useWorkspace();
   const voices = useVoices();
+  const totalMessages = chats.reduce((sum, c) => sum + c.messages.length, 0);
 
   return (
     <div className="space-y-6">
