@@ -105,6 +105,47 @@ function SettingsPage() {
         </CardContent>
       </Card>
 
+      <Card className="border-destructive/40">
+        <CardHeader>
+          <CardTitle className="text-base text-destructive">Danger zone</CardTitle>
+          <CardDescription>
+            Permanently delete your workplace chat history from this browser. This cannot be undone.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-muted-foreground">
+            {chats.length} conversation{chats.length === 1 ? "" : "s"} · {totalMessages} message{totalMessages === 1 ? "" : "s"}
+          </p>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" disabled={chats.length === 0}>
+                <Trash2 className="mr-2 h-4 w-4" /> Delete chat history
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  User data will be irrecoverable. All workplace chatbot conversations and messages stored in this browser will be permanently deleted.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    clearChats();
+                    toast.success("Chat history deleted.");
+                  }}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Yes, delete everything
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </CardContent>
+      </Card>
+
       <Card className="border-dashed">
         <CardHeader>
           <CardTitle className="text-base">Responsible AI</CardTitle>
