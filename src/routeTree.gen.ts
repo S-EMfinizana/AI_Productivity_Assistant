@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppMeetingSummarizerRouteImport } from './routes/_app.meeting-summarizer'
 import { Route as AppEmailGeneratorRouteImport } from './routes/_app.email-generator'
 import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppMeetingSummarizerRoute = AppMeetingSummarizerRouteImport.update({
+  id: '/meeting-summarizer',
+  path: '/meeting-summarizer',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppEmailGeneratorRoute = AppEmailGeneratorRouteImport.update({
   id: '/email-generator',
@@ -38,11 +44,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof AppDashboardRoute
   '/email-generator': typeof AppEmailGeneratorRoute
+  '/meeting-summarizer': typeof AppMeetingSummarizerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof AppDashboardRoute
   '/email-generator': typeof AppEmailGeneratorRoute
+  '/meeting-summarizer': typeof AppMeetingSummarizerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -50,13 +58,20 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/email-generator': typeof AppEmailGeneratorRoute
+  '/_app/meeting-summarizer': typeof AppMeetingSummarizerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/email-generator'
+  fullPaths: '/' | '/dashboard' | '/email-generator' | '/meeting-summarizer'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/email-generator'
-  id: '__root__' | '/' | '/_app' | '/_app/dashboard' | '/_app/email-generator'
+  to: '/' | '/dashboard' | '/email-generator' | '/meeting-summarizer'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/_app/dashboard'
+    | '/_app/email-generator'
+    | '/_app/meeting-summarizer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -80,6 +95,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/meeting-summarizer': {
+      id: '/_app/meeting-summarizer'
+      path: '/meeting-summarizer'
+      fullPath: '/meeting-summarizer'
+      preLoaderRoute: typeof AppMeetingSummarizerRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/email-generator': {
       id: '/_app/email-generator'
       path: '/email-generator'
@@ -100,11 +122,13 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
   AppEmailGeneratorRoute: typeof AppEmailGeneratorRoute
+  AppMeetingSummarizerRoute: typeof AppMeetingSummarizerRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
   AppEmailGeneratorRoute: AppEmailGeneratorRoute,
+  AppMeetingSummarizerRoute: AppMeetingSummarizerRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
