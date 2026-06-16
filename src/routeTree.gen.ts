@@ -16,6 +16,7 @@ import { Route as AppResearchAssistantRouteImport } from './routes/_app.research
 import { Route as AppMeetingSummarizerRouteImport } from './routes/_app.meeting-summarizer'
 import { Route as AppEmailGeneratorRouteImport } from './routes/_app.email-generator'
 import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
+import { Route as AppChatbotRouteImport } from './routes/_app.chatbot'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -51,9 +52,15 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppChatbotRoute = AppChatbotRouteImport.update({
+  id: '/chatbot',
+  path: '/chatbot',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/chatbot': typeof AppChatbotRoute
   '/dashboard': typeof AppDashboardRoute
   '/email-generator': typeof AppEmailGeneratorRoute
   '/meeting-summarizer': typeof AppMeetingSummarizerRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/chatbot': typeof AppChatbotRoute
   '/dashboard': typeof AppDashboardRoute
   '/email-generator': typeof AppEmailGeneratorRoute
   '/meeting-summarizer': typeof AppMeetingSummarizerRoute
@@ -72,6 +80,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/_app/chatbot': typeof AppChatbotRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/email-generator': typeof AppEmailGeneratorRoute
   '/_app/meeting-summarizer': typeof AppMeetingSummarizerRoute
@@ -82,6 +91,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/chatbot'
     | '/dashboard'
     | '/email-generator'
     | '/meeting-summarizer'
@@ -90,6 +100,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/chatbot'
     | '/dashboard'
     | '/email-generator'
     | '/meeting-summarizer'
@@ -99,6 +110,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_app'
+    | '/_app/chatbot'
     | '/_app/dashboard'
     | '/_app/email-generator'
     | '/_app/meeting-summarizer'
@@ -162,10 +174,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/chatbot': {
+      id: '/_app/chatbot'
+      path: '/chatbot'
+      fullPath: '/chatbot'
+      preLoaderRoute: typeof AppChatbotRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppChatbotRoute: typeof AppChatbotRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppEmailGeneratorRoute: typeof AppEmailGeneratorRoute
   AppMeetingSummarizerRoute: typeof AppMeetingSummarizerRoute
@@ -174,6 +194,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppChatbotRoute: AppChatbotRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppEmailGeneratorRoute: AppEmailGeneratorRoute,
   AppMeetingSummarizerRoute: AppMeetingSummarizerRoute,
