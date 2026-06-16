@@ -71,6 +71,9 @@ interface WorkspaceCtx {
   addTasks: (t: Omit<PlannerTask, "id">[]) => void;
   updateTask: (id: string, patch: Partial<PlannerTask>) => void;
   deleteTask: (id: string) => void;
+  chats: ChatConversation[];
+  setChats: (updater: (prev: ChatConversation[]) => ChatConversation[]) => void;
+  clearChats: () => void;
 }
 
 const Ctx = createContext<WorkspaceCtx | null>(null);
@@ -80,6 +83,7 @@ const LS = {
   tts: "ow_tts",
   projects: "ow_projects",
   tasks: "ow_tasks",
+  chats: "ow_chats",
 };
 
 function load<T>(key: string, fallback: T): T {
