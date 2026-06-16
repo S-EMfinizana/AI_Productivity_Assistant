@@ -36,6 +36,19 @@ export interface PlannerTask {
   urgency?: "urgent" | "not_urgent";
 }
 
+export interface ChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  at: string;
+}
+
+export interface ChatConversation {
+  id: string;
+  title: string;
+  messages: ChatMessage[];
+}
+
 export interface TTSSettings {
   rate: number;
   pitch: number;
