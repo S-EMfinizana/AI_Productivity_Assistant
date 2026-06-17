@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_app/email-generator")({
 const tones = ["Formal", "Professional", "Friendly", "Persuasive", "Apologetic", "Follow-up", "Thank-you"];
 
 function EmailGenerator() {
-  const { saveProject } = useWorkspace();
+  const { saveProject, projects, tasks } = useWorkspace();
   const [inputs, setInputs] = useState<EmailInputs>({
     recipient: "",
     sender: "",
@@ -44,7 +44,7 @@ function EmailGenerator() {
     length: 2,
   });
   const [loading, setLoading] = useState(false);
-  const [draft, setDraft] = useState<ReturnType<typeof generateEmail> | null>(null);
+  const [draft, setDraft] = useState<EmailDraft | null>(null);
   const [editable, setEditable] = useState("");
 
   const run = async () => {
@@ -53,11 +53,33 @@ function EmailGenerator() {
       return;
     }
     setLoading(true);
-    await delay();
-    const result = generateEmail(inputs);
-    setDraft(result);
-    setEditable(emailToText(result));
-    setLoading(false);
+    setDraft(null);
+    try {
+      const recentProjects = projects.slice(0, 5).map((p) => ({ title: p.title, type: p.type }));
+      const openTasks = tasks
+        .filter((t) => t.status !== "done")
+        .slice(0, 5)
+        .map((t) => ({ title: t.title, priority: t.priority }));
+      const res = await fetch("/api/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...inputs, context: { recentProjects, openTasks } }),
+      });
+      if (!res.ok) {
+        const msg = await res.text();
+        if (res.status === 429) toast.error("Rate limit reached. Please try again shortly.");
+        else if (res.status === 402) toast.error("AI credits exhausted. Add credits to continue.");
+        else toast.error(msg || "Failed to generate email.");
+        return;
+      }
+      const result = (await res.json()) as EmailDraft;
+      setDraft(result);
+      setEditable(emailToText(result));
+    } catch {
+      toast.error("Network error while contacting the AI.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const copy = async () => {
