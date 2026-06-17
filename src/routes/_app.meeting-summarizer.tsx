@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { delay, summarizeMeeting, type SummaryResult } from "@/lib/mock-ai";
+import type { MeetingSummary } from "@/routes/api/meeting";
 import { useWorkspace } from "@/lib/workspace";
 
 export const Route = createFileRoute("/_app/meeting-summarizer")({
