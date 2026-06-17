@@ -211,17 +211,22 @@ function MeetingSummarizer() {
                   <TabsList className="w-full">
                     <TabsTrigger value="exec" className="flex-1">Executive</TabsTrigger>
                     <TabsTrigger value="dec" className="flex-1">Decisions</TabsTrigger>
-                    <TabsTrigger value="act" className="flex-1">Action items</TabsTrigger>
+                    <TabsTrigger value="act" className="flex-1">Actions</TabsTrigger>
+                    <TabsTrigger value="ins" className="flex-1">Insights</TabsTrigger>
                   </TabsList>
                   <TabsContent value="exec" className="pt-4 text-sm leading-relaxed">
                     {result.executive}
                   </TabsContent>
                   <TabsContent value="dec" className="pt-4">
-                    <ul className="list-disc space-y-2 pl-5 text-sm">
-                      {result.decisions.map((d, i) => (
-                        <li key={i}>{d}</li>
-                      ))}
-                    </ul>
+                    {result.decisions.length ? (
+                      <ul className="list-disc space-y-2 pl-5 text-sm">
+                        {result.decisions.map((d, i) => (
+                          <li key={i}>{d}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No explicit decisions detected.</p>
+                    )}
                   </TabsContent>
                   <TabsContent value="act" className="pt-4">
                     <div className="overflow-x-auto">
@@ -247,6 +252,36 @@ function MeetingSummarizer() {
                           ))}
                         </TableBody>
                       </Table>
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="ins" className="space-y-4 pt-4 text-sm">
+                    <div>
+                      <div className="mb-1 text-xs font-medium uppercase text-muted-foreground">Sentiment</div>
+                      <Badge variant="secondary" className="capitalize">{result.sentiment ?? "neutral"}</Badge>
+                    </div>
+                    <div>
+                      <div className="mb-1 text-xs font-medium uppercase text-muted-foreground">Topics</div>
+                      {result.topics && result.topics.length ? (
+                        <div className="flex flex-wrap gap-1.5">
+                          {result.topics.map((t, i) => (
+                            <Badge key={i} variant="outline">{t}</Badge>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-muted-foreground">No topics detected.</p>
+                      )}
+                    </div>
+                    <div>
+                      <div className="mb-1 text-xs font-medium uppercase text-muted-foreground">Risks & open questions</div>
+                      {result.risks && result.risks.length ? (
+                        <ul className="list-disc space-y-1.5 pl-5">
+                          {result.risks.map((r, i) => (
+                            <li key={i}>{r}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-muted-foreground">None flagged.</p>
+                      )}
                     </div>
                   </TabsContent>
                 </Tabs>
