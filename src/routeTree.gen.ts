@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiResearchRouteImport } from './routes/api/research'
+import { Route as ApiMeetingRouteImport } from './routes/api/meeting'
 import { Route as ApiEmailRouteImport } from './routes/api/email'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AppTaskPlannerRouteImport } from './routes/_app.task-planner'
@@ -35,6 +36,11 @@ const IndexRoute = IndexRouteImport.update({
 const ApiResearchRoute = ApiResearchRouteImport.update({
   id: '/api/research',
   path: '/api/research',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMeetingRoute = ApiMeetingRouteImport.update({
+  id: '/api/meeting',
+  path: '/api/meeting',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiEmailRoute = ApiEmailRouteImport.update({
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/task-planner': typeof AppTaskPlannerRoute
   '/api/chat': typeof ApiChatRoute
   '/api/email': typeof ApiEmailRoute
+  '/api/meeting': typeof ApiMeetingRoute
   '/api/research': typeof ApiResearchRoute
 }
 export interface FileRoutesByTo {
@@ -114,6 +121,7 @@ export interface FileRoutesByTo {
   '/task-planner': typeof AppTaskPlannerRoute
   '/api/chat': typeof ApiChatRoute
   '/api/email': typeof ApiEmailRoute
+  '/api/meeting': typeof ApiMeetingRoute
   '/api/research': typeof ApiResearchRoute
 }
 export interface FileRoutesById {
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   '/_app/task-planner': typeof AppTaskPlannerRoute
   '/api/chat': typeof ApiChatRoute
   '/api/email': typeof ApiEmailRoute
+  '/api/meeting': typeof ApiMeetingRoute
   '/api/research': typeof ApiResearchRoute
 }
 export interface FileRouteTypes {
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/task-planner'
     | '/api/chat'
     | '/api/email'
+    | '/api/meeting'
     | '/api/research'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/task-planner'
     | '/api/chat'
     | '/api/email'
+    | '/api/meeting'
     | '/api/research'
   id:
     | '__root__'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/_app/task-planner'
     | '/api/chat'
     | '/api/email'
+    | '/api/meeting'
     | '/api/research'
   fileRoutesById: FileRoutesById
 }
@@ -183,6 +195,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   ApiChatRoute: typeof ApiChatRoute
   ApiEmailRoute: typeof ApiEmailRoute
+  ApiMeetingRoute: typeof ApiMeetingRoute
   ApiResearchRoute: typeof ApiResearchRoute
 }
 
@@ -207,6 +220,13 @@ declare module '@tanstack/react-router' {
       path: '/api/research'
       fullPath: '/api/research'
       preLoaderRoute: typeof ApiResearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/meeting': {
+      id: '/api/meeting'
+      path: '/api/meeting'
+      fullPath: '/api/meeting'
+      preLoaderRoute: typeof ApiMeetingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/email': {
@@ -311,6 +331,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   ApiChatRoute: ApiChatRoute,
   ApiEmailRoute: ApiEmailRoute,
+  ApiMeetingRoute: ApiMeetingRoute,
   ApiResearchRoute: ApiResearchRoute,
 }
 export const routeTree = rootRouteImport

@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { delay, summarizeMeeting, type SummaryResult } from "@/lib/mock-ai";
+import type { MeetingSummary } from "@/routes/api/meeting";
 import { useWorkspace } from "@/lib/workspace";
 
 export const Route = createFileRoute("/_app/meeting-summarizer")({
@@ -27,7 +27,7 @@ function MeetingSummarizer() {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [transcript, setTranscript] = useState("");
-  const [result, setResult] = useState<SummaryResult | null>(null);
+  const [result, setResult] = useState<MeetingSummary | null>(null);
   const [loading, setLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -38,7 +38,6 @@ function MeetingSummarizer() {
       return;
     }
     const text = await file.text();
-    // For PDFs the text may be binary; we still surface what we can.
     setTranscript((prev) => (prev ? prev + "\n" + text : text));
     toast.success(`Loaded ${file.name}`);
   };
@@ -49,9 +48,27 @@ function MeetingSummarizer() {
       return;
     }
     setLoading(true);
-    await delay();
-    setResult(summarizeMeeting(transcript, title));
-    setLoading(false);
+    setResult(null);
+    try {
+      const res = await fetch("/api/meeting", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, transcript }),
+      });
+      if (!res.ok) {
+        const msg = await res.text();
+        if (res.status === 429) toast.error("Rate limit hit — please try again shortly.");
+        else if (res.status === 402) toast.error("AI credits exhausted. Add credits to continue.");
+        else toast.error(msg || "Failed to summarize meeting.");
+        return;
+      }
+      const data = (await res.json()) as MeetingSummary;
+      setResult(data);
+    } catch {
+      toast.error("Network error while summarizing.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fullText = result
@@ -194,17 +211,22 @@ function MeetingSummarizer() {
                   <TabsList className="w-full">
                     <TabsTrigger value="exec" className="flex-1">Executive</TabsTrigger>
                     <TabsTrigger value="dec" className="flex-1">Decisions</TabsTrigger>
-                    <TabsTrigger value="act" className="flex-1">Action items</TabsTrigger>
+                    <TabsTrigger value="act" className="flex-1">Actions</TabsTrigger>
+                    <TabsTrigger value="ins" className="flex-1">Insights</TabsTrigger>
                   </TabsList>
                   <TabsContent value="exec" className="pt-4 text-sm leading-relaxed">
                     {result.executive}
                   </TabsContent>
                   <TabsContent value="dec" className="pt-4">
-                    <ul className="list-disc space-y-2 pl-5 text-sm">
-                      {result.decisions.map((d, i) => (
-                        <li key={i}>{d}</li>
-                      ))}
-                    </ul>
+                    {result.decisions.length ? (
+                      <ul className="list-disc space-y-2 pl-5 text-sm">
+                        {result.decisions.map((d, i) => (
+                          <li key={i}>{d}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No explicit decisions detected.</p>
+                    )}
                   </TabsContent>
                   <TabsContent value="act" className="pt-4">
                     <div className="overflow-x-auto">
@@ -230,6 +252,36 @@ function MeetingSummarizer() {
                           ))}
                         </TableBody>
                       </Table>
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="ins" className="space-y-4 pt-4 text-sm">
+                    <div>
+                      <div className="mb-1 text-xs font-medium uppercase text-muted-foreground">Sentiment</div>
+                      <Badge variant="secondary" className="capitalize">{result.sentiment ?? "neutral"}</Badge>
+                    </div>
+                    <div>
+                      <div className="mb-1 text-xs font-medium uppercase text-muted-foreground">Topics</div>
+                      {result.topics && result.topics.length ? (
+                        <div className="flex flex-wrap gap-1.5">
+                          {result.topics.map((t, i) => (
+                            <Badge key={i} variant="outline">{t}</Badge>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-muted-foreground">No topics detected.</p>
+                      )}
+                    </div>
+                    <div>
+                      <div className="mb-1 text-xs font-medium uppercase text-muted-foreground">Risks & open questions</div>
+                      {result.risks && result.risks.length ? (
+                        <ul className="list-disc space-y-1.5 pl-5">
+                          {result.risks.map((r, i) => (
+                            <li key={i}>{r}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-muted-foreground">None flagged.</p>
+                      )}
                     </div>
                   </TabsContent>
                 </Tabs>
