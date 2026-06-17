@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { delay, generateResearch, type ResearchReport } from "@/lib/mock-ai";
+import type { ResearchReport } from "@/lib/mock-ai";
 import { useWorkspace } from "@/lib/workspace";
 
 export const Route = createFileRoute("/_app/research-assistant")({
@@ -34,9 +34,27 @@ function ResearchAssistant() {
       return;
     }
     setLoading(true);
-    await delay(1100);
-    setReport(generateResearch(topic, urls, article, questions));
-    setLoading(false);
+    setReport(null);
+    try {
+      const res = await fetch("/api/research", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic, urls, article, questions }),
+      });
+      if (!res.ok) {
+        const msg = await res.text();
+        if (res.status === 429) toast.error("Rate limit reached. Try again shortly.");
+        else if (res.status === 402) toast.error("AI credits exhausted. Add credits to continue.");
+        else toast.error(msg || "Research failed.");
+        return;
+      }
+      const data = (await res.json()) as ResearchReport;
+      setReport(data);
+    } catch {
+      toast.error("Network error generating report.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const text = report
