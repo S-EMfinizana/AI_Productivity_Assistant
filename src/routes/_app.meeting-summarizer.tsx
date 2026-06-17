@@ -27,7 +27,7 @@ function MeetingSummarizer() {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [transcript, setTranscript] = useState("");
-  const [result, setResult] = useState<SummaryResult | null>(null);
+  const [result, setResult] = useState<MeetingSummary | null>(null);
   const [loading, setLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -38,7 +38,6 @@ function MeetingSummarizer() {
       return;
     }
     const text = await file.text();
-    // For PDFs the text may be binary; we still surface what we can.
     setTranscript((prev) => (prev ? prev + "\n" + text : text));
     toast.success(`Loaded ${file.name}`);
   };
@@ -49,9 +48,27 @@ function MeetingSummarizer() {
       return;
     }
     setLoading(true);
-    await delay();
-    setResult(summarizeMeeting(transcript, title));
-    setLoading(false);
+    setResult(null);
+    try {
+      const res = await fetch("/api/meeting", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, transcript }),
+      });
+      if (!res.ok) {
+        const msg = await res.text();
+        if (res.status === 429) toast.error("Rate limit hit — please try again shortly.");
+        else if (res.status === 402) toast.error("AI credits exhausted. Add credits to continue.");
+        else toast.error(msg || "Failed to summarize meeting.");
+        return;
+      }
+      const data = (await res.json()) as MeetingSummary;
+      setResult(data);
+    } catch {
+      toast.error("Network error while summarizing.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fullText = result
