@@ -13,8 +13,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
-import { delay, emailToText, generateEmail, type EmailInputs } from "@/lib/mock-ai";
+import { emailToText, type EmailInputs } from "@/lib/mock-ai";
 import { useWorkspace } from "@/lib/workspace";
+
+type EmailDraft = {
+  subject: string;
+  greeting: string;
+  body: string;
+  closing: string;
+  signature: string;
+};
 
 export const Route = createFileRoute("/_app/email-generator")({
   head: () => ({
